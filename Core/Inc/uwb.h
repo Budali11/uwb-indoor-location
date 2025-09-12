@@ -19,6 +19,7 @@ typedef enum uwb_state_t_ {
 typedef enum {
   KEYWORD_UNKNOWN = 0,
   KEYWORD_OK,          // "OK"
+  KEYWORD_BUSY,        // "BUSY"
   KEYWORD_BEACON_NUM,  // "BeaconNum:"
   KEYWORD_BEACON_INFO, // "BeaconInfo:"
   KEYWORD_ID,          // "id->"

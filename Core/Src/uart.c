@@ -54,6 +54,8 @@ void process_buffer(void) {
   while (buffer_update == 0)
     ;
   buffer_update = 0;
+  if (cur_rx_ptr == old_rx_ptr)
+    return;
   char *recv = &rx_buffer[old_rx_ptr];
   char *rx_buffer_rep = 0;
   uint16_t recv_num = 0;

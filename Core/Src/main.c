@@ -29,7 +29,9 @@
 #include "uwb.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +46,7 @@
 #endif
 
 #if !(defined(UWB_DIST_THRESHOLD))
-#define UWB_DIST_THRESHOLD (100)
+#define UWB_DIST_THRESHOLD (300)
 #endif
 
 #if !(defined(UWB_ENABLE_HIGH_PERFORMANCE))
@@ -146,6 +148,7 @@ int main(void) {
 
   low_level_init();
   m_start_receive();
+  srand(time(NULL));
 
 #ifdef LED_TEST
   while (1) {
@@ -175,7 +178,18 @@ int main(void) {
   uwb_cmd((uint8_t *)"AT+SAVE\r\n");
 
   int detected = 0; // how many gateway were detected
+  int undetected_times = 0;
+  uint32_t delay_time = 0;
   while (1) {
+    // wait for module ok
+    while (uwb_state != UWB_OK) {
+      while (buffer_update == 0) {
+        HAL_Delay(100);
+        uwb_wakeup();
+        send_string((uint8_t *)"AT\r\n");
+      }
+      process_buffer();
+    }
     // uwb_cmd((uint8_t *)"AT+SCAN=500,1\r\n");
     UWB_SCAN(UWB_SCAN_INTERVAL);
 
@@ -200,13 +214,31 @@ int main(void) {
         }
       }
     }
-    if (detected == 0) // gateway is too far to detect any
-      HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, GPIO_PIN_RESET);
+    if (detected == 0) { // gateway is too far to detect any
+      undetected_times++;
+      if (undetected_times > 3) {
+        // we should give the uwb module and beacon a few channces
+        HAL_GPIO_WritePin(TEST_LED_GPIO_Port, TEST_LED_Pin, GPIO_PIN_RESET);
+        undetected_times = 0;
+      }
+      // else {
+      //   // and we should wait a few while here, let other tag communicate
+      //   uint32_t delay_time = rand() % (undetected_times * 300);
+      //   HAL_Delay(delay_time);
+      // }
+    } else {
+      undetected_times = 0;
+    }
     detected = 0;
 #endif
-    uwb_wakeup();
-    send_string((uint8_t *)"AT\r\n");
-    process_buffer();
+    // process_buffer();
+
+    // delay_time = rand() % 200 + 600 - undetected_times * 200;
+    delay_time = rand() % (650 - undetected_times * 200) +
+                 (350 - undetected_times * 100);
+    // delay_time = rand() % (850 - undetected_times * 200);
+    HAL_Delay(delay_time);
+    // HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -347,7 +379,19 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
+#include <sys/time.h>
 
+int _gettimeofday(struct timeval *tv, void *tzvp) {
+
+  uint64_t t = HAL_GetTick(); // get uptime in microseconds
+
+  tv->tv_sec = t / 1000; // convert to seconds
+
+  tv->tv_usec = t % 1000; // get remaining microseconds
+
+  return 0; // return non-zero for error
+
+} // end _gettimeofday()
 /* USER CODE END 4 */
 
 /**

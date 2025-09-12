@@ -227,7 +227,8 @@ void USART1_IRQHandler(void) {
     __HAL_UART_CLEAR_IDLEFLAG(&huart1);
     old_rx_ptr = cur_rx_ptr;
     cur_rx_ptr = RX_BUFFER_LENGTH - __HAL_DMA_GET_COUNTER(&hdma_usart1_rx);
-    buffer_update = 1;
+    if (old_rx_ptr != cur_rx_ptr)
+      buffer_update = 1;
   }
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);

@@ -74,7 +74,7 @@ set(OPENOCD_SCRIPTS "/home/budali11/xpack-openocd-0.11.0-5/scripts")
 add_custom_target(download
     COMMAND echo "开始烧录程序..."
     COMMAND sudo openocd -s ${OPENOCD_SCRIPTS}
-            -f ${OPENOCD_SCRIPTS}/interface/stlink-v2.cfg 
+            -f ${OPENOCD_SCRIPTS}/interface/stlink.cfg 
             -f ${OPENOCD_SCRIPTS}/target/stm32f1x.cfg
             -c init
             -c "reset halt"
@@ -89,6 +89,6 @@ add_custom_target(download
 
 add_custom_target(connect
     COMMAND sudo openocd -s ${OPENOCD_SCRIPTS}
-            -f ${OPENOCD_SCRIPTS}/interface/stlink-v2.cfg 
+            -f ${OPENOCD_SCRIPTS}/interface/stlink.cfg 
             -f ${OPENOCD_SCRIPTS}/target/stm32f1x.cfg
 )

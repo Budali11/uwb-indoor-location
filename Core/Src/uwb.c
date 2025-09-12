@@ -48,6 +48,14 @@ ParsedResult *find_results(uint8_t *buffer, uint32_t num) {
       tmp = &((*tmp)->next);
       i += 4 - 1;
       break;
+    } else if (buffer[i] == 'B') {
+      *tmp = malloc(sizeof(ParsedResult));
+      (*tmp)->next = NULL;
+      (*tmp)->type = KEYWORD_BUSY;
+      (*tmp)->value = 0;
+      tmp = &((*tmp)->next);
+      i += 6 - 1;
+      break;
     } else if (buffer[i] == '+') {
       i += 7;
       if (buffer[i] == 'N') { // +BeaconNum
@@ -110,6 +118,13 @@ void uwb_parse(uint8_t *buffer, uint32_t buffer_len) {
   while (results != NULL) {
     if (results->type == KEYWORD_OK) {
       uwb_state = UWB_OK;
+      tobe_free = results;
+      results = results->next;
+      while (tobe_free == NULL)
+        ;
+      free(tobe_free);
+    } else if (results->type == KEYWORD_BUSY) {
+      uwb_state = UWB_BUSY;
       tobe_free = results;
       results = results->next;
       while (tobe_free == NULL)
