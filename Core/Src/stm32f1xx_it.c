@@ -22,6 +22,7 @@
 #include "main.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,7 +42,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+// these 2 pointer always point to the start of the coming string
+// and the end of the coming string('\0')
+uint32_t cur_rx_ptr = 0;
+uint32_t old_rx_ptr = 0;
+uint8_t buffer_update = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -215,12 +220,6 @@ void DMA1_Channel5_IRQHandler(void) {
 /**
  * @brief This function handles USART1 global interrupt.
  */
-// these 2 pointer always point to the start of the coming string
-// and the end of the coming string('\0')
-uint32_t cur_rx_ptr = 0;
-uint32_t old_rx_ptr = 0;
-uint8_t buffer_update = 0;
-#include "uart.h"
 void USART1_IRQHandler(void) {
   /* USER CODE BEGIN USART1_IRQn 0 */
   if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE) == SET) {

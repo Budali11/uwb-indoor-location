@@ -2,3 +2,8 @@ build/
 .cache/
 .vscode/
 .mxproject
+CMakeLists.txt
+CMakePresets.json
+STM32F103XX_FLASH.ld
+startup_stm32f103xb.s
+cmake/

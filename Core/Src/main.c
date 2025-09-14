@@ -379,6 +379,7 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
+#ifdef __GNUC__
 #include <sys/time.h>
 
 int _gettimeofday(struct timeval *tv, void *tzvp) {
@@ -392,6 +393,7 @@ int _gettimeofday(struct timeval *tv, void *tzvp) {
   return 0; // return non-zero for error
 
 } // end _gettimeofday()
+#endif
 /* USER CODE END 4 */
 
 /**
