@@ -1,6 +1,6 @@
-该工程为CMake工程，工具链为arm-none-eabi，如果你配置的环境是MDK-ARM，可以用STM32CubeMX打开stm32-uwb.ioc，重新生成MDK工程。
+该工程为CMake工程，工具链为arm-none-eabi，如果你配置的环境是MDK-ARM，可以用STM32CubeMX打开stm32-uwb.ioc，重新生成MDK工程，然后将Core/Src文件夹下的非cubemx生成的文件导入工程中。
 
-编译工程（如果使用MDK，直接点击UI界面的编译）：
+编译工程（如果使用MDK，添加完文件后直接点击UI界面的编译）：
 ```sh
 cd ./stm32-uwb/
 mkdir build
